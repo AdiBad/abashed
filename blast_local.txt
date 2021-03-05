@@ -1,0 +1,35 @@
+##Made local DB for BLAST 
+
+#Switch to custom directory to store output files
+mkdir -p APIS_DB4BLAST/
+cd APIS_DB4BLAST/
+makeblastdb -in ../uniprot_Apis_mellifera.fasta -out Apis_proteome -dbtype prot -title "Apis mellifera Proteome" -parse_seqids
+
+#Switch to custom directory to store output files
+mkdir -p LATI_DB4BLAST/
+cd LATI_DB4BLAST/
+makeblastdb -in ../uniprot_Latimeria_chalumnae.fasta -out Lati_proteome -dbtype prot -title "Latimeria chalumnae Proteome" -parse_seqids
+
+##Performing BLASTP for both against each other
+
+blastp -query uniprot_Apis_mellifera.fasta -db LATI_DB4BLAST/Lati_proteome -evalue 1e-6 -out blastp_apis_against_lati.txt -outfmt '7 qseqid sseqid length qlen slen qstart qend sstart send evalue' -num_threads 4
+blastp -query uniprot_Latimeria_chalumnae.fasta -db APIS_DB4BLAST/Apis_proteome -evalue 1e-6 -out blastp_lati_against_apis.txt -outfmt '7 qseqid sseqid length qlen slen qstart qend sstart send evalue' -num_threads 4
+
+##Performing BLASTP for both against themselves respectively (capture duplication events)
+
+blastp -query uniprot_Apis_mellifera.fasta -db APIS_DB4BLAST/Apis_proteome -evalue 1e-6 -max_hsps 1 -max_target_seqs 2 -out REVISEDblastp_apis_against_apis.txt -outfmt '7 qseqid sseqid length qlen slen qstart qend sstart send evalue' -num_threads 4
+#Remove all comments
+#take query, subject and eval
+grep -v "#" REVISEDblastp_apis_against_apis.txt | cut -f 1,2,10  > revised_inparalogs_apis.tsv
+
+
+blastp -query uniprot_Latimeria_chalumnae.fasta -db LATI_DB4BLAST/Lati_proteome -evalue 1e-6 -max_hsps 1 -max_target_seqs 2 -out REVISEDblastp_lati_against_lati.txt -outfmt '7 qseqid sseqid length qlen slen qstart qend sstart send evalue' -num_threads 4
+#Remove all comments
+#take query, subject and eval
+grep -v "#" REVISEDblastp_apis_against_apis.txt | cut -f 1,2,10  > revised_inparalogs_apis.tsv
+
+#Follow up in common_bbh.py notebook
+
+
+
+
