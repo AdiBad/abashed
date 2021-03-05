@@ -1,0 +1,25 @@
+Running screen 
+
+Screen -S $name (start)
+Ctrl+A, Ctrl+D -> exit the screen
+Sceen -R $name (reattach)
+Exit -> type inside the screen to close everything
+
+#---------------------------------------------------------------------------#
+
+Extract columns in specific order
+
+awk -F "," '{ print $4, $1,$8,$7,$5,$6}' gene_data.csv
+(comma is delimiter)
+#---------------------------------------------------------------------------#
+
+Merge all files into one
+
+cat *.fna > merged_file.fna
+#---------------------------------------------------------------------------#
+
+Bash move common extension from multiple directories into one folder
+
+mv **/*.gbk allGBKfiles/
+
+#---------------------------------------------------------------------------#
